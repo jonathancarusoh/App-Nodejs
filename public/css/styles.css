@@ -9,12 +9,12 @@ body {
     
 }
 
-.container1 {
-display: flex;
-flex-direction: row;
-width: 300px;
-height: 300px;
-margin: 5px;
+.container-list {
+    width: 250px;
+    margin: 10px;
+
+
+
 }
 
 .row1{
@@ -26,3 +26,13 @@ margin: 5px;
 .pi {
     color: red;
 }
+
+
+
+@media screen and (max-width: 550px) {
+
+    .container-list{
+
+    }
+
+};

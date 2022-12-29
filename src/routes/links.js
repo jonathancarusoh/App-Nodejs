@@ -8,6 +8,11 @@ router.get('/add',(req, res) =>{
 });
 
 
+router.get('/body',(req, res) =>{
+   res.render('links/body');
+});
+
+
 router.post('/add', async (req,res) =>{
   const { title, url, description }  = req.body;
   const newLink = { 
@@ -15,14 +20,15 @@ router.post('/add', async (req,res) =>{
    url,
    description
   };
-  await pool.query('insert into LINKS set ?', [newLink]);
+  await pool.query('INSERT INTO links set ?', [newLink]);
+  req.flash('success', 'link save successfully');//muentra un mensaje de Success save
  res.redirect('/links'); //redirecciona a la paguina principal
 }); 
 
 //
 router.get('/', async (req, res) => {
 const links = await pool.query('SELECT * FROM links');
-console.log(links);
+
 res.render('links/list', { links });
 });
 
@@ -37,9 +43,23 @@ router.get('/delete/:id',async(req,res) => {
 //Edita las Url
 router.get('/edit/:id',async(req, res)=>{
    const { id } = req.params;
-   res.render('links/edit')
+   const links = await pool.query ('SELECT *FROM links WhERE id = ?',[id]);
+   res.render('links/edit', {link: links[0]});
   
 
+});
+
+//ruta de links editados
+router.post('/edit/:id', async(req, res)=>{
+const { id } = req.params;
+const {title, description, url} = req.body;
+const newLink = {
+   title,
+   description,
+   url
+}
+await pool.query ('UPDATE links set ? WHERE id = ?', [newLink, id]);
+res.redirect('/links');
 });
 
 module.exports = router; 

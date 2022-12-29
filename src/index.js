@@ -2,10 +2,15 @@ const express = require('express');
 const morgan = require('morgan');
 const {engine} = require('express-handlebars');
 const  path = require('path');
-
+const flash = require('connect-flash');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session');
+const { database } = require('./keys');
+const passport= require('passport');
 
 //Initializations
 const app = express();
+require('./lib/passport');
 
 //Setting
 
@@ -26,14 +31,27 @@ app.engine('.hbs', engine({
 app.set('view engine', '.hbs');
 
 //Middlewartes
+app.use(session({
+secret: 'fastmysqlnodesession',
+resave:false,
+saveUninitialized: false,
+store: new MySQLStore(database)
+}));
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Global variables
 app.use((req, res, next)=> {
+  app.locals.success = req.flash('success');  //hace disponible el mensaje en todas las vistas
+    
     next();
 });
+
+
 
 //Routes
 app.use(require('./routes/index'));
