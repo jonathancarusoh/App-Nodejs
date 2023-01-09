@@ -20,8 +20,17 @@ router.get('/signin', (req, res) => {
 res.render('auth/signin');
 });
 
+router.post('/signin',(req, res, next) => {
+    passport.authenticate('local.signin', {
+        successRedirect: '/profile',
+        failureRedirect: '/signin',
+        failureFlash: true
+    })(req, res, next); 
+   });
+
 router.get('/profile', (req,res) => {
-    res.send('this is your Profile')
+    res.send('este es tu perfil')
+    //res.render('links/add-success');
 });
 
 module.exports = router; 

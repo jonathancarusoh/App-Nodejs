@@ -33,7 +33,7 @@ app.set('view engine', '.hbs');
 //Middlewartes
 app.use(session({
 secret: 'fastmysqlnodesession',
-resave:false,
+resave: false,
 saveUninitialized: false,
 store: new MySQLStore(database)
 }));
@@ -46,7 +46,8 @@ app.use(passport.session());
 
 //Global variables
 app.use((req, res, next)=> {
-  app.locals.success = req.flash('success');  //hace disponible el mensaje en todas las vistas
+  app.locals.success = req.flash('success');
+  app.locals.message = req.flash('message');  //hace disponible el mensaje en todas las vistas
     
     next();
 });
