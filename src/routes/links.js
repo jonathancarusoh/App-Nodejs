@@ -38,6 +38,7 @@ res.render('links/list', { links });
 router.get('/delete/:id',async(req,res) => {
    const { id } = req.params;
    await pool.query('DELETE FROM links WHERE ID = ?', [id] ); //elimina el id que le estamos preguntando
+   req.flash('success', 'Links Removed successfully');
    res.redirect('/links'); //redirecciona a la ventana links
 });
 
@@ -60,6 +61,7 @@ const newLink = {
    url
 }
 await pool.query ('UPDATE links set ? WHERE id = ?', [newLink, id]);
+req.flash('success', 'Link Updated successfully');
 res.redirect('/links');
 });
 

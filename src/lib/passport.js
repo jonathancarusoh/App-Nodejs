@@ -10,7 +10,7 @@ passwordField: 'password',
 passReqToCallback: true
 }, async (req, username, password, done) => {
     console.log(req.body);
-    const rows = pool.query('SELECT * FROM users WHERE username = ?', [username]); //consultar a usuarion que coincidan con "username"
+    const rows = await pool.query('SELECT * FROM users WHERE username = ?', [username]); //consultar a usuarion que coincidan con "username"
     if (rows.length > 0) { //si son mayor a 0 enocntro unusuario
         const user = rows[0]; // es para optener ese usuario
         const validPassword = await helpers.matchPassword(password, user.password); //validad contraseñas, compara contraseñas, devuelve true o false

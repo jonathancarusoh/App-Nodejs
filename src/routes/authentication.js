@@ -29,8 +29,10 @@ router.post('/signin',(req, res, next) => {
    });
 
 router.get('/profile', (req,res) => {
-    res.send('este es tu perfil')
+    res.render('profile');
     //res.render('links/add-success');
 });
+
+
 
 module.exports = router; 
