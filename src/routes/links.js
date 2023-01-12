@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const pool = require('../database');
+const { isLoggedIn, isNoLoggedIn } = require('../lib/auth');
 
-router.get('/add',(req, res) =>{
+router.get('/add',isLoggedIn,(req, res) =>{
    res.render('links/add');
 });
 
@@ -14,12 +15,13 @@ router.get('/body',(req, res) =>{
 
 
 
-router.post('/add', async (req,res) =>{
+router.post('/add',isLoggedIn, async (req,res) =>{
   const { title, url, description }  = req.body;
   const newLink = { 
    title,
    url,
-   description
+   description,
+   user_id: req.user.id //enlasa la tarea con el id del usuarip
   };
   await pool.query('INSERT INTO links set ?', [newLink]);
   req.flash('success', 'link save successfully');//muentra un mensaje de Success save
@@ -27,15 +29,15 @@ router.post('/add', async (req,res) =>{
 }); 
 
 //
-router.get('/', async (req, res) => {
-const links = await pool.query('SELECT * FROM links');
+router.get('/',isLoggedIn, async (req, res) => {
+const links = await pool.query('SELECT * FROM links WHERE user_id = ?',[req.user.id]); //selecciona todos los elnaces - enlases del id correspondiente 
 
 res.render('links/list', { links });
 });
 
 //el AWAIT lo que hace es no seguir con el codigo hasta que cargue
 //borra las url
-router.get('/delete/:id',async(req,res) => {
+router.get('/delete/:id',isLoggedIn, async(req,res) => {
    const { id } = req.params;
    await pool.query('DELETE FROM links WHERE ID = ?', [id] ); //elimina el id que le estamos preguntando
    req.flash('success', 'Links Removed successfully');
@@ -43,7 +45,7 @@ router.get('/delete/:id',async(req,res) => {
 });
 
 //Edita las Url
-router.get('/edit/:id',async(req, res)=>{
+router.get('/edit/:id',isLoggedIn, async(req, res)=>{
    const { id } = req.params;
    const links = await pool.query ('SELECT *FROM links WhERE id = ?',[id]);
    res.render('links/edit', {link: links[0]});
@@ -52,7 +54,7 @@ router.get('/edit/:id',async(req, res)=>{
 });
 
 //ruta de links editados
-router.post('/edit/:id', async(req, res)=>{
+router.post('/edit/:id', isLoggedIn, async(req, res)=>{
 const { id } = req.params;
 const {title, description, url} = req.body;
 const newLink = {
